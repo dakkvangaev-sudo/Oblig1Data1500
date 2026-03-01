@@ -2,9 +2,9 @@
 
 **Student:** [Dåkk Ruslanovitsj Vangaev]
 
-**Studentnummer:** [Ditt studentnummer]
+**Studentnummer:** [Davan1754]
 
-**Dato:** [Innleveringsdato]
+**Dato:** [01.03.2025]
 
 ---
 
@@ -14,11 +14,14 @@
 
 **Identifiserte entiteter:**
 
-[Skriv ditt svar her - list opp alle entitetene du har identifisert]
+[Sykkel, Stasjon, Kunde og utleie]
 
 **Attributter for hver entitet:**
 
-[Skriv ditt svar her - list opp attributtene for hver entitet]
+[kunde: fornavn, etternavn, mobilnummer, epost og kunde_id
+Sykkel: sykkel_id, innkjøpsdato, tilstand og sykkel_status
+Stasjon: adresse og kapasitet
+utleie: utleie_tidspunkt, innlevering_tidspunkt]
 
 ---
 
@@ -26,15 +29,66 @@
 
 **Valgte datatyper og begrunnelser:**
 
-[Skriv ditt svar her - forklar hvilke datatyper du har valgt for hver attributt og hvorfor]
+[
+VARCHAR for tall, text og tegn. Brukes på: fornavn, etternavn, mobilnummer, epost, tilstand, sykkel_status og adresse.
+
+DATE for kun dato. brukes på: innkjøpsdato.
+
+Int for heltall. brukes på kapasitet.
+
+DATE TIME for dato og tid. brukes på: utleie_tidspunkt og innlevering_tidspunkt
+
+NUMERIC(10,2) for tall og desimaltall. brukes på: pris
+]
 
 **`CHECK`-constraints:**
 
-[Skriv ditt svar her - list opp alle CHECK-constraints du har lagt til og forklar hvorfor de er nødvendige]
+[
+check(length(fornavn) > 0): for å sjekke om fornavn har høyere verdi enn 0.
+
+check(length(etternavn) > 0): for å sjekke om etternavn har høyere verdi enn 0.
+
+check (mobilnummer ~ "^[0-9]{10}$"): sjekker om det er tall mellom 0-9 og sjekker om det er 10 antall tall.
+
+CHECK (sykkel_status IN ('ledig', 'utleid', 'reperasjon')): sjekker om sykkel_status har verdien ledig, utleid eller reperasjon.
+
+CHECK (length(adresse) > 0): sjekker om adresse har høyere verdi enn 0
+
+CHECK (kapasitet > 0): sjekker om kapasitet har høyere verdi enn 0
+
+CHECK (innlevering_tidspunkt > utleie_tidspunkt): sjekker om innlevering_tidspunkt er etter utleie_tidspunkt
+
+CHECK (pris >= 0): sjekker om verdien til pris er mer eller lik 0
+]
 
 **ER-diagram:**
 
-[Legg inn mermaid-kode eller eventuelt en bildefil fra `mermaid.live` her]
+[
+erDiagram
+
+KUNDE{
+    varchar fornavn
+    varchar etternavn
+    varchar mobilnummer
+    varchar epost
+}
+
+SYKKEL {
+    DATE innkjopsdato
+    VARCHAR tilstand
+    VARCHAR sykkel_status
+}
+
+STASJON{
+    varcahr adresse
+    int kapasitet
+}
+
+UTLEIE{
+    date utleie
+    date innlevering
+    numeric pris
+}t]
 
 ---
 
@@ -42,15 +96,48 @@
 
 **Valgte primærnøkler og begrunnelser:**
 
-[Skriv ditt svar her - forklar hvilke primærnøkler du har valgt for hver entitet og hvorfor]
+[
+brukte serial primary key.
+]
 
 **Naturlige vs. surrogatnøkler:**
 
-[Skriv ditt svar her - diskuter om du har brukt naturlige eller surrogatnøkler og hvorfor]
+[ I motsetnig til nøkler som brukes i f.eks mobilnummer fornavn, så kan ikke den endres. Noe som gjør den mer stabil.]
 
 **Oppdatert ER-diagram:**
 
-[Legg inn mermaid-kode eller eventuelt en bildefil fra `mermaid.live` her]
+[
+erDiagram
+	direction TB
+	KUNDE {
+		varchar fornavn  ""  
+		varchar etternavn  ""  
+		varchar mobilnummer  ""  
+		varchar epost  ""  
+		serial kundeId pk ""  
+	}
+
+SYKKEL {
+		serial sykkelId pk ""  
+		DATE innkjopsdato  ""  
+		VARCHAR tilstand  ""  
+		VARCHAR sykkel_status  ""  
+	}
+
+STASJON {
+		serial stasjonId pk ""  
+		serial sykkelId fk ""  
+		varcahr adresse  ""  
+		int kapasitet  ""  
+	}
+
+UTLEIE {
+		date utleie  ""  
+		date innlevering  ""  
+		numeric pris  ""  
+	}
+
+  ]
 
 ---
 
@@ -58,7 +145,9 @@
 
 **Identifiserte forhold og kardinalitet:**
 
-[Skriv ditt svar her - list opp alle forholdene mellom entitetene og angi kardinalitet]
+[
+
+]
 
 **Fremmednøkler:**
 
