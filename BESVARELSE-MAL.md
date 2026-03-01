@@ -1,6 +1,6 @@
 # Besvarelse - Refleksjon og Analyse
 
-**Student:** [Ditt navn]
+**Student:** [Dåkk Ruslanovitsj Vangaev]
 
 **Studentnummer:** [Ditt studentnummer]
 
