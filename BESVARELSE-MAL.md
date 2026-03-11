@@ -145,17 +145,51 @@ UTLEIE {
 
 **Identifiserte forhold og kardinalitet:**
 
-[
-
-]
-
 **Fremmednøkler:**
 
-[Skriv ditt svar her - list opp alle fremmednøklene og forklar hvordan de implementerer forholdene]
+[
+Sykkel ID: brukes på stasjon og utleie. Stasjon for å vite hvilken sykkel som ligger igjen i stasjonen og utleie for å vite hvilken sykkel som blir leid ut.
+]
 
 **Oppdatert ER-diagram:**
 
-[Legg inn mermaid-kode eller eventuelt en bildefil fra `mermaid.live` her]
+[erDiagram
+	direction TB
+	KUNDE {
+		varchar fornavn  ""  
+		varchar etternavn  ""  
+		varchar mobilnummer  ""  
+		varchar epost  ""  
+		serial kundeId pk ""  
+	}
+
+SYKKEL {
+		serial sykkelId pk ""  
+		DATE innkjopsdato  ""  
+		VARCHAR tilstand  ""  
+		VARCHAR sykkel_status  ""  
+		serial stasjonId pk ""  
+	}
+
+STASJON {
+		serial stasjonId pk ""  
+		varcahr adresse  ""  
+		int kapasitet  ""  
+	}
+
+UTLEIE {
+		serial stasjonId fk ""  
+		serial sykkelId fk ""  
+		date utleie  ""  
+		date innlevering  ""  
+		numeric pris  ""  
+		serial kundeId fk ""  
+	}
+
+STASJON}|--|{UTLEIE:"  "
+SYKKEL}|--|{STASJON:"  "
+SYKKEL}|--|{UTLEIE:"  "
+KUNDE}|--|{UTLEIE:"  "]
 
 ---
 
@@ -163,15 +197,15 @@ UTLEIE {
 
 **Vurdering av 1. normalform (1NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 1NF og hvorfor]
+[alle attributtene er atomiske. navn, mobillnumnmer, epost,datoer, pris og ider har kun en verdi]
 
 **Vurdering av 2. normalform (2NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 2NF og hvorfor]
+[bruker surrogatnøkkler i alle tabellene]
 
 **Vurdering av 3. normalform (3NF):**
 
-[Skriv ditt svar her - forklar om datamodellen din tilfredsstiller 3NF og hvorfor]
+[ingen transitive avhengigheter]
 
 **Eventuelle justeringer:**
 
