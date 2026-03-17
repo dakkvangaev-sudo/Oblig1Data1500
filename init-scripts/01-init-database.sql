@@ -45,6 +45,8 @@ CREATE TABLE las (
     sykkel_id INT REFERENCES sykkel(sykkel_id)
 );
 
+-- Sett inn testdata
+
 INSERT INTO kunde (fornavn, etternavn, mobilnummer, epost) VALUES
 ('Ola', 'Nordmann', '1234567890', 'ola@example.com'),
 ('Kari', 'Hansen', '0987654321', 'kari@example.com'),
@@ -142,10 +144,19 @@ INSERT INTO utleie (utleie_tidspunkt, innlevering_tidspunkt, pris, kunde_id, syk
 ('2024-03-04 09:00','2024-03-04 09:45',39,3,27,3),
 ('2024-03-04 10:00','2024-03-04 10:40',29,4,33,4),
 ('2024-03-04 11:00','2024-03-04 11:55',59,5,41,5);
--- Sett inn testdata
+SELECT * FROM sykkel
+WHERE sykkel_status = 'ledig';
 
+SELECT * FROM sykkel
+WHERE stasjon_id = 1;
 
-
+SELECT * FROM utleie
+WHERE kunde_id = 1;
+SELECT SUM(pris) AS total_inntekt
+FROM utleie;
+SELECT DISTINCT k.fornavn, k.etternavn
+FROM kunde k
+JOIN utleie u ON k.kunde_id = u.kunde_id;
 -- DBA setninger (rolle: kunde, bruker: kunde_1)
 
 

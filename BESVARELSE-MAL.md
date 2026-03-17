@@ -235,7 +235,11 @@ KUNDE}|--|{UTLEIE:"  "]
 
 **Dokumentasjon av vellykket kjøring:**
 
-[Skriv ditt svar her - f.eks. skjermbilder eller output fra terminalen som viser at databasen ble opprettet uten feil]
+[
+PS C:\Users\Dåkk\OneDrive - OsloMet\Dokumenter\Oblig1Data1500> docker-compose up -d
+[+] up 2/2
+ ✔ Network oblig1data1500_data1500-network Created                                                                              0.1s
+ ✔ Container data1500-postgres             Created                                                                              0.3s]
 
 **Spørring mot systemkatalogen:**
 
@@ -250,7 +254,90 @@ ORDER BY table_name;
 **Resultat:**
 
 ```
-[Skriv resultatet av spørringen her - list opp alle tabellene som ble opprettet]
+[
+	PS C:\Users\Dåkk\OneDrive - OsloMet\Dokumenter\Oblig1Data1500> docker exec -it data1500-postgres psql -U admin -d oblig01
+psql (15.17)
+Type "help" for help.
+
+oblig01=# SELECT tablename
+oblig01-# FROM pg_catalog.pg_tables
+oblig01-# WHERE schemaname = 'public';
+ tablename
+-----------
+ stasjon
+ sykkel
+ kunde
+ utleie
+ las
+(5 rows)
+
+oblig01=# SELECT * FROM sykkel;
+ sykkel_id | innkjopsdato | tilstand | sykkel_status | stasjon_id
+-----------+--------------+----------+---------------+------------
+         1 | 2022-01-01   | god      | ledig         |          1
+         2 | 2022-01-02   | ok       | ledig         |          1
+         3 | 2022-01-03   | slitt    | utleid        |          1
+         4 | 2022-01-04   | god      | ledig         |          1
+         5 | 2022-01-05   | ok       | reperasjon    |          1
+         6 | 2022-01-06   | god      | ledig         |          1
+         7 | 2022-01-07   | ok       | ledig         |          1
+         8 | 2022-01-08   | slitt    | utleid        |          1
+         9 | 2022-01-09   | god      | ledig         |          1
+        10 | 2022-01-10   | ok       | ledig         |          1
+        11 | 2022-01-11   | god      | ledig         |          2
+        12 | 2022-01-12   | ok       | ledig         |          2
+        13 | 2022-01-13   | slitt    | utleid        |          2
+        14 | 2022-01-14   | god      | ledig         |          2
+        15 | 2022-01-15   | ok       | reperasjon    |          2
+        16 | 2022-01-16   | god      | ledig         |          2
+        17 | 2022-01-17   | ok       | ledig         |          2
+        18 | 2022-01-18   | slitt    | utleid        |          2
+        19 | 2022-01-19   | god      | ledig         |          2
+        20 | 2022-01-20   | ok       | ledig         |          2
+        21 | 2022-01-21   | god      | ledig         |          3
+        22 | 2022-01-22   | ok       | ledig         |          3
+        23 | 2022-01-23   | slitt    | utleid        |          3
+        24 | 2022-01-24   | god      | ledig         |          3
+        25 | 2022-01-25   | ok       | reperasjon    |          3
+        26 | 2022-01-26   | god      | ledig         |          3
+        27 | 2022-01-27   | ok       | ledig         |          3
+        28 | 2022-01-28   | slitt    | utleid        |          3
+        29 | 2022-01-29   | god      | ledig         |          3
+        30 | 2022-01-30   | ok       | ledig         |          3
+        31 | 2022-02-01   | god      | ledig         |          4
+        32 | 2022-02-02   | ok       | ledig         |          4
+        33 | 2022-02-03   | slitt    | utleid        |          4
+        34 | 2022-02-04   | god      | ledig         |          4
+        35 | 2022-02-05   | ok       | reperasjon    |          4
+        36 | 2022-02-06   | god      | ledig         |          4
+        37 | 2022-02-07   | ok       | ledig         |          4
+        38 | 2022-02-08   | slitt    | utleid        |          4
+        39 | 2022-02-09   | god      | ledig         |          4
+        40 | 2022-02-10   | ok       | ledig         |          4
+        41 | 2022-02-11   | god      | ledig         |          5
+        42 | 2022-02-12   | ok       | ledig         |          5
+        43 | 2022-02-13   | slitt    | utleid        |          5
+        44 | 2022-02-14   | god      | ledig         |          5
+        45 | 2022-02-15   | ok       | reperasjon    |          5
+        46 | 2022-02-16   | god      | ledig         |          5
+        47 | 2022-02-17   | ok       | ledig         |          5
+        48 | 2022-02-18   | slitt    | utleid        |          5
+        49 | 2022-02-19   | god      | ledig         |          5
+        50 | 2022-02-20   | ok       | ledig         |          5
+(50 rows)
+
+oblig01=#
+oblig01=# SELECT * FROM kunde;
+ kunde_id | fornavn | etternavn | mobilnummer |       epost
+----------+---------+-----------+-------------+--------------------
+        1 | Ola     | Nordmann  | 1234567890  | ola@example.com
+        2 | Kari    | Hansen    | 0987654321  | kari@example.com
+        3 | Per     | Johansen  | 1112223334  | per@example.com
+        4 | Lise    | Berg      | 2223334445  | lise@example.com
+        5 | Marius  | Solberg   | 3334445556  | marius@example.com
+(5 rows)
+
+]
 ```
 
 ---
