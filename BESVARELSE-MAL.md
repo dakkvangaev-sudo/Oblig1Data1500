@@ -14,13 +14,14 @@
 
 **Identifiserte entiteter:**
 
-[Sykkel, Stasjon, Kunde og utleie]
+[Sykkel, Stasjon, Kunde, lås og utleie]
 
 **Attributter for hver entitet:**
 
 [kunde: fornavn, etternavn, mobilnummer, epost og kunde_id
 Sykkel: sykkel_id, innkjøpsdato, tilstand og sykkel_status
 Stasjon: adresse og kapasitet
+lås: lås_id
 utleie: utleie_tidspunkt, innlevering_tidspunkt]
 
 ---
@@ -75,6 +76,58 @@ erDiagram
 	}
 	 LÅS {
         int lås_id PK
+        int posisjon
+    }
+
+
+	SYKKEL {
+		serial sykkelId pk ""  
+		DATE innkjopsdato  ""  
+		VARCHAR tilstand  ""  
+		VARCHAR sykkel_status  ""  
+	}
+
+	STASJON {
+		serial stasjonId pk ""  
+		varcahr adresse  ""  
+		int kapasitet  ""  
+	}
+
+	UTLEIE {
+		date utleie  ""  
+		date innlevering  ""  
+		numeric pris  ""  
+	}
+
+]
+---
+
+### Oppgave 1.3: Primærnøkler
+
+**Valgte primærnøkler og begrunnelser:**
+
+[
+brukte serial primary key.
+]
+
+**Naturlige vs. surrogatnøkler:**
+
+[ I motsetnig til nøkler som brukes i f.eks mobilnummer fornavn, så kan ikke den endres. Noe som gjør den mer stabil.]
+
+**Oppdatert ER-diagram:**
+
+[
+erDiagram
+	direction TB
+	KUNDE {
+		varchar fornavn  ""  
+		varchar etternavn  ""  
+		varchar mobilnummer  ""  
+		varchar epost  ""  
+		serial kundeId pk ""  
+	}
+	 LÅS {
+        int lås_id PK
         int stasjon_id FK
         int posisjon
     }
@@ -108,54 +161,6 @@ erDiagram
     STASJON ||--o{ LÅS : "stasjon inneholder låser og sykkler"
     STASJON ||--o{ SYKKEL : "har sykler"
     LÅS ||--o{ SYKKEL : "sykkel har låser"
-
----
-
-### Oppgave 1.3: Primærnøkler
-
-**Valgte primærnøkler og begrunnelser:**
-
-[
-brukte serial primary key.
-]
-
-**Naturlige vs. surrogatnøkler:**
-
-[ I motsetnig til nøkler som brukes i f.eks mobilnummer fornavn, så kan ikke den endres. Noe som gjør den mer stabil.]
-
-**Oppdatert ER-diagram:**
-
-[
-erDiagram
-	direction TB
-	KUNDE {
-		varchar fornavn  ""  
-		varchar etternavn  ""  
-		varchar mobilnummer  ""  
-		varchar epost  ""  
-		serial kundeId pk ""  
-	}
-
-SYKKEL {
-		serial sykkelId pk ""  
-		DATE innkjopsdato  ""  
-		VARCHAR tilstand  ""  
-		VARCHAR sykkel_status  ""  
-	}
-
-STASJON {
-		serial stasjonId pk ""  
-		serial sykkelId fk ""  
-		varcahr adresse  ""  
-		int kapasitet  ""  
-	}
-
-UTLEIE {
-		date utleie  ""  
-		date innlevering  ""  
-		numeric pris  ""  
-	}
-
   ]
 
 ---
@@ -498,7 +503,6 @@ En policy prioriterer sikkerhet og dette kan ikke omgås. i motsetning til polic
 
 	121 500 x 556 = 67 554 000 bytes ca= 64.4MB
 
-	veldig unødvendig oppgave
 ]
 
 
@@ -530,6 +534,7 @@ hvis det hender i det kunden må innsette informasjon blir det da innsettingsano
 
 sletteanomalier oppstår når det hender feil i sletteovergangen. Ett eksempel på dette kan være at en kunde kun hadde en utleie og ville slette denne raden, men så ble all imformasjonen om henne sletta.
 
+kor oppsumert så er oppdateringsanomali feil ved informasjonsoppdatering. innsetingsanomali er feil i det kunden skal sette inn informasjon og sletteanomali er feil som oppstår i det kunden skal slette informasjon
 ]
 
 **Fordeler med en indeks:**
@@ -633,21 +638,31 @@ Det er lurest å validere alle lag dersom den går gjennom hele systemet og unng
 [
 i del 1 så lærte jeg å sette opp en plan. Jeg lærte å bruke erDiagram også lærte jeg forskjellene mellom erDiagram og sql.
 
+del 2 så lærte jeg mer om sql koding. jeg lærte mye om å gi verdier til atributter. jeg lærte også mye om unike datatyper som ble brukt. til slutt så lærte jeg å runne koden og teste den via spørringer med bruk av docker container og terminalen.
+
+i del 3 så lærte jeg å opprette bruker, roller og view. jeg forstod også at man må de enkelte tinga og gi bruker tilgang til view og roller.
+
+i del 4 så lærte jeg å analysere databasen. Jeg lærte om forskjellige datastrukturer som f.eks LMS. I tilleg til det så lærte jeg mye om RAM og kapasitet. Lærte om hvor mye bytes forskjellige datatyper bruker.
 ]
 
 **Hvordan har denne oppgaven bidratt til å oppnå læringsmålene:**
-
-[Skriv din refleksjon her - koble oppgaven til læringsmålene i emnet]
+[
+med tanke på at denne obligen var lang, godt gjennomtenkt og varierende har jeg lært godt om mye forskjellig. dette hjelper veldig mye.
+]
 
 Se oversikt over læringsmålene i en PDF-fil i Canvas https://oslomet.instructure.com/courses/33293/files/folder/Plan%20v%C3%A5ren%202026?preview=4370886
 
 **Hva var mest utfordrende:**
 
-[Skriv din refleksjon her - diskuter hvilke deler av oppgaven som var mest krevende]
+[
+største utfordninger er å lage selve strukturen i sql. 
+]
 
 **Hva har du lært om databasedesign:**
 
-[Skriv din refleksjon her - reflekter over prosessen med å designe en database fra bunnen av]
+[
+jeg har lært om å tenke gjennom hva jeg får bruk for og hvordan oppsettet skal se ut.
+]
 
 ---
 

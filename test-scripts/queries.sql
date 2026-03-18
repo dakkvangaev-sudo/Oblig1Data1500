@@ -1,5 +1,5 @@
-SELECT * FROM sykkel
-WHERE sykkel_status = 'ledig';
+SELECT table_name
+FROM information_schema.tables
+WHERE table_schema = 'public'
+ORDER BY table_name;
 
-SELECT * FROM sykkel
-WHERE stasjon_id = 1;
