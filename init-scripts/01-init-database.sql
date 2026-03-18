@@ -144,11 +144,7 @@ INSERT INTO utleie (utleie_tidspunkt, innlevering_tidspunkt, pris, kunde_id, syk
 ('2024-03-04 09:00','2024-03-04 09:45',39,3,27,3),
 ('2024-03-04 10:00','2024-03-04 10:40',29,4,33,4),
 ('2024-03-04 11:00','2024-03-04 11:55',59,5,41,5);
-SELECT * FROM sykkel
-WHERE sykkel_status = 'ledig';
 
-SELECT * FROM sykkel
-WHERE stasjon_id = 1;
 
 SELECT * FROM utleie
 WHERE kunde_id = 1;
@@ -159,8 +155,24 @@ FROM kunde k
 JOIN utleie u ON k.kunde_id = u.kunde_id;
 -- DBA setninger (rolle: kunde, bruker: kunde_1)
 
+CREATE role kunde;
 
+create user kunde_1 with PASSWORD 'passord';
 
+grant kunde to kunde_1;
+
+grant SELECT on kunde to kunde;
+GRANT SELECT on sykkel to kunde;
+GRANT SELECT on stason to kunde;
+grant SELECT on utleie to kunde;
+grant select on las to kunde; 
+
+grant SELECT on all VIEWS in SCHEMA PUBLIC to kunde;
+
+create VIEW sykkel_utleie_system AS
+SELECT * 
+FROM utleie
+WHERE kunde_id = current_user::text::int;
 -- Eventuelt: Opprett indekser for ytelse
 
 

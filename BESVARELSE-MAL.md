@@ -65,30 +65,49 @@ CHECK (pris >= 0): sjekker om verdien til pris er mer eller lik 0
 
 [
 erDiagram
+	direction TB
+	KUNDE {
+		varchar fornavn  ""  
+		varchar etternavn  ""  
+		varchar mobilnummer  ""  
+		varchar epost  ""  
+		serial kundeId pk ""  
+	}
+	 LÅS {
+        int lås_id PK
+        int stasjon_id FK
+        int posisjon
+    }
 
-KUNDE{
-    varchar fornavn
-    varchar etternavn
-    varchar mobilnummer
-    varchar epost
-}
 
-SYKKEL {
-    DATE innkjopsdato
-    VARCHAR tilstand
-    VARCHAR sykkel_status
-}
+	SYKKEL {
+		serial sykkelId pk ""  
+		DATE innkjopsdato  ""  
+		VARCHAR tilstand  ""  
+		VARCHAR sykkel_status  ""  
+		serial stasjonId fk ""  
+	}
 
-STASJON{
-    varcahr adresse
-    int kapasitet
-}
+	STASJON {
+		serial stasjonId pk ""  
+		varcahr adresse  ""  
+		int kapasitet  ""  
+	}
 
-UTLEIE{
-    date utleie
-    date innlevering
-    numeric pris
-}t]
+	UTLEIE {
+		serial stasjonId fk ""  
+		serial sykkelId fk ""  
+		date utleie  ""  
+		date innlevering  ""  
+		numeric pris  ""  
+		serial kundeId fk ""  
+	}
+
+	KUNDE ||--o{ UTLEIE : "utleie får informasjon av kunde"
+    SYKKEL ||--o{ UTLEIE : "sykkel låses opp og utleie for informasjon av sykkel"
+    STASJON ||--o{ LÅS : "stasjon inneholder låser og sykkler"
+    STASJON ||--o{ SYKKEL : "har sykler"
+    LÅS ||--o{ SYKKEL : "sykkel har låser"
 
 ---
 
@@ -349,19 +368,28 @@ oblig01=# SELECT * FROM kunde;
 **SQL for å opprette rolle:**
 
 ```sql
-[Skriv din SQL-kode for å opprette rollen 'kunde' her]
+[CREATE role kunde;]
 ```
 
 **SQL for å opprette bruker:**
 
 ```sql
-[Skriv din SQL-kode for å opprette brukeren 'kunde_1' her]
+[create user kunde_1 with PASSWORD 'passord';
+]
 ```
 
 **SQL for å tildele rettigheter:**
 
 ```sql
-[Skriv din SQL-kode for å tildele rettigheter til rollen her]
+[
+	grant kunde to kunde_1;
+
+grant SELECT on kunde to kunde;
+GRANT SELECT on sykkel to kunde;
+GRANT SELECT on stason to kunde;
+grant SELECT on utleie to kunde;
+grant select on las to kunde; 
+]
 ```
 
 ---
@@ -371,12 +399,21 @@ oblig01=# SELECT * FROM kunde;
 **SQL for VIEW:**
 
 ```sql
-[Skriv din SQL-kode for VIEW her]
+[
+	grant SELECT on all VIEWS in SCHEMA PUBLIC to kunde;
+
+create VIEW sykkel_utleie_system AS
+SELECT * 
+FROM utleie
+WHERE kunde_id = current_user::text::int;
+]
 ```
 
 **Ulempe med VIEW vs. POLICIES:**
 
-[Skriv ditt svar her - diskuter minst én ulempe med å bruke VIEW for autorisasjon sammenlignet med POLICIES]
+[
+En policy prioriterer sikkerhet og dette kan ikke omgås. i motsetning til policy kan bruker av view fortsatt få tilgang til tabellene hvis de har rettigheter. Dette er basert på select, mens i policy er det integrert i databasen.
+]
 
 ---
 
@@ -392,15 +429,78 @@ oblig01=# SELECT * FROM kunde;
 
 **Totalt antall utleier per år:**
 
-[Skriv din utregning her]
+[
+	høysesong: 20 000 * 5 = 100 000
+	Mellomsesong: 5 000 * 4 = 20 000
+	Lavsesong 500 * 3 = 1500
 
-**Estimat for lagringskapasitet:**
+	100 000 + 20 000 + 1 500 = 121 500 utleier.
 
-[Skriv din utregning her - vis hvordan du har beregnet lagringskapasiteten for hver tabell]
 
-**Totalt for første år:**
+	tabell: kunde
+	serian (int) = 4 bytes
+	varchar(150) = 50 bytes
+	varchar(150) = 50 bytes
+	varchar(15)= 15 bytes
+	varchar(50) = 30
 
-[Skriv ditt estimat her]
+	størrelse: 4 + 50 + 50 + 15 + 30 = 149
+	overhead: 23 + (5x4) = 43
+	total: 149 + 43 = 192 
+
+
+	tabell stasjon:
+	serial = 4 bytes
+	varchar(150) = 50 bytes
+	INT = 4 bytes
+
+	størrelse: 4 + 50 + 4 = 58
+	overhead: 23 + (3x4) = 35
+	total: 58 + 35 = 93 
+
+
+	tabell: sykkel
+	serial = 4 bytes
+	date = 4 bytes
+	varchar(50) = 20 bytes
+	varchar(150) = 50 bytes
+	int = 4 bytes
+
+	størrelse: 4 + 4 + 20 + 50 + 4 = 82
+	23 + (5x4) = 43
+	82 + 43 = 125 
+
+
+	tabell: utleie
+	serial = 4 bytes
+	timestamp = 8 bytes
+	timestamp = 8 bytes
+	numeric(10,2) = 16 bytes
+	3xint = 12 bytes
+
+	størrelse: 4 + 8 + 8 + 16 + 12 = 48
+	overhead: 23 + (7x4) = 51
+	total: 48 + 51 = 99 
+
+
+	tabell: las
+	serial = 4 bytes
+	2x int = 8 bytes
+
+	størrelse = 8 + 4 = 12
+	overhead: 23 + (3x4) = 35
+	total: 12 + 35 = 47 
+
+	
+	total til sammen: 192 + 93 + 125 + 99 + 47 = 556
+
+	til sammen så vil alle tabellene tilsvare ca 556 bytes
+
+	121 500 x 556 = 67 554 000 bytes ca= 64.4MB
+
+	veldig unødvendig oppgave
+]
+
 
 ---
 
@@ -410,31 +510,53 @@ oblig01=# SELECT * FROM kunde;
 
 **Problem 1: Redundans**
 
-[Skriv ditt svar her - gi konkrete eksempler fra CSV-filen som viser redundans]
+[
+betydningen på redusans er at informasjonen gjentas. Exempel på dette kan du finne i Ole,Hansen,+4791234567,ole.hansen@example.com og Kari,Olsen,+4792345678,kari.olsen@example.com
+
+]
 
 **Problem 2: Inkonsistens**
 
-[Skriv ditt svar her - forklar hvordan redundans kan føre til inkonsistens med eksempler]
+[
+når en data gjentas kan det oppstå inkonsistens noe som gjør at det kan oppstå feil som f.eks stavefeil.
+]
 
 **Problem 3: Oppdateringsanomalier**
 
-[Skriv ditt svar her - diskuter slette-, innsettings- og oppdateringsanomalier]
+[
+hvis det blir endring på informasjonen til en kunde så må alle radene oppdateres. Med dette kan det oppstå inkonsistens. Dette blir da en oppdateringsanomali.
+
+hvis det hender i det kunden må innsette informasjon blir det da innsettingsanomali. Eksempel på dette kan være at kunde må sette inn kundeinfo, stasjonsinfo og utleietidspunkt samtidig selv om det ikke gir mening.
+
+sletteanomalier oppstår når det hender feil i sletteovergangen. Ett eksempel på dette kan være at en kunde kun hadde en utleie og ville slette denne raden, men så ble all imformasjonen om henne sletta.
+
+]
 
 **Fordeler med en indeks:**
 
-[Skriv ditt svar her - forklar hvorfor en indeks ville gjort spørringen mer effektiv]
+[
+fordeler med indeks er at den kan søke i loggen automatisk istedenfor at du må gå gjennom manuelt rad for rad.
+]
 
 **Case 1: Indeks passer i RAM**
 
-[Skriv ditt svar her - forklar hvordan indeksen fungerer når den passer i minnet]
+[
+når indeks passer inn i RAM kan PostgreSQL søke uten disktilgang og kun de relevante radene blir henta.
+]
 
 **Case 2: Indeks passer ikke i RAM**
 
-[Skriv ditt svar her - forklar hvordan flettesortering kan brukes]
+[
+hvis indeks er større enn RAM så må PostgreSQL hente deler av indeksen fra disk. DBMS må ta i bruk av flettesortering for å bygge eller rebalansere indeksen
+]
 
 **Datastrukturer i DBMS:**
 
-[Skriv ditt svar her - diskuter B+-tre og hash-indekser]
+[
+B+-tre er en standard datastruktur for indekser i relasjondatabaser. Den er bra for range (>,<). God for både lesing og skriving.
+
+Hashing er rask for eksakt oppslag(=)
+]
 
 ---
 
@@ -442,17 +564,23 @@ oblig01=# SELECT * FROM kunde;
 
 **Foreslått datastruktur:**
 
-[Skriv ditt svar her - f.eks. heap-fil, LSM-tree, eller annen egnet datastruktur]
+[
+LMS-treet er det beste valget
+]
 
 **Begrunnelse:**
 
 **Skrive-operasjoner:**
 
-[Skriv ditt svar her - forklar hvorfor datastrukturen er egnet for mange skrive-operasjoner]
+[
+Loggingen til LMS-treet er append only. Dette gjør at historikken ikke kan bli slettet og at gamle rader ikke blir oppdatert.
+]
 
 **Lese-operasjoner:**
 
-[Skriv ditt svar her - forklar hvordan datastrukturen håndterer sjeldne lese-operasjoner]
+[
+ved lesing søker systemet først i minnet og deretter i segmentene. Dette gir god ytelse for lesehastighet, skrivehastinghet og belastning.
+]
 
 ---
 
@@ -460,23 +588,41 @@ oblig01=# SELECT * FROM kunde;
 
 **Hvor bør validering gjøres:**
 
-[Skriv ditt svar her - argumenter for validering i ett eller flere lag]
+[
+validering burde gjøres i alle lag.
+]
 
 **Validering i nettleseren:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+[
+fordeler: mindre trafikk til serveren, rask tilbakemelding og enkjelt og implementere.
+
+ulemper: ingen sikkerhet.
+
+]
 
 **Validering i applikasjonslaget:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+[
+fordeler: gir detaljert feilmelding til brukeren.
+
+ulemper: krever mer kode dersom applikasjonen må unngås feil.
+
+]
 
 **Validering i databasen:**
 
-[Skriv ditt svar her - diskuter fordeler og ulemper]
+[
+fordeler: bruker unike koder. Er siste forsvarslinje for å nekte ugyldig data.
+
+ulemper: gir ikke like brukervennlig feilmelding. Kan ikke validere alt
+]
 
 **Konklusjon:**
 
-[Skriv ditt svar her - oppsummer hvor validering bør gjøres og hvorfor]
+[
+Det er lurest å validere alle lag dersom den går gjennom hele systemet og unngår mest mulig feil
+]
 
 ---
 
@@ -484,7 +630,10 @@ oblig01=# SELECT * FROM kunde;
 
 **Hva har du lært så langt i emnet:**
 
-[Skriv din refleksjon her - diskuter sentrale konsepter du har lært]
+[
+i del 1 så lærte jeg å sette opp en plan. Jeg lærte å bruke erDiagram også lærte jeg forskjellene mellom erDiagram og sql.
+
+]
 
 **Hvordan har denne oppgaven bidratt til å oppnå læringsmålene:**
 
@@ -511,7 +660,9 @@ Se oversikt over læringsmålene i en PDF-fil i Canvas https://oslomet.instructu
 
 **Eventuelle feil og rettelser:**
 
-[Skriv ditt svar her - hvis noen tester feilet, forklar hva som var feil og hvordan du rettet det]
+[
+Eneste problemet som oppstod for meg var at tabellene ville ikke opprettes i det jeg skulle prøve å runne programemt. Usikker på hvorfor det skjedde, men når jeg sletta docker containeren og oppretta den opp på nytt igjen så funka alt som forventa.
+]
 
 ---
 
